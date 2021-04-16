@@ -1,0 +1,37 @@
+version: "3.3"
+services:
+  app:
+    build: .
+    environment:
+      MONGODB_CONNECTION_STRING: mongodb://mongodb:27017
+      MONGODB_DB_NAME: lvr-db
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+      MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      MINIO_BUCKET: lvr-data
+    depends_on:
+      - mongodb
+      - minio
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data:/data/db
+  minio:
+    image: minio/minio:latest
+    volumes:
+      - minio-data:/data
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+      MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    command: server /data
+volumes:
+  minio-data:
+  mongodb-data:
